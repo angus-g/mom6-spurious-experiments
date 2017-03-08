@@ -4,7 +4,7 @@
 	restart_input_dir = './',
 	restart_output_dir = 'RESTART/',
 	parameter_filename =
-		'@CMAKE_CURRENT_SOURCE_DIR@/../MOM_common',
+		'@CMAKE_SOURCE_DIR@/config/MOM_common',
 		'@CMAKE_CURRENT_SOURCE_DIR@/MOM_input',
 		'MOM_override' /
 
