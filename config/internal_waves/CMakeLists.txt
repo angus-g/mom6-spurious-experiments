@@ -7,7 +7,7 @@ set(MOM6_EXE $<TARGET_FILE:MOM6>)
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
 
 # viscosity parameters
-set(PARAMS_KH 0.01 0.1 1 10 100 200)
+set(PARAMS_KH 0.01 1 15 150)
 
 # loop over parameter space
 foreach(PARAM_KH IN LISTS PARAMS_KH)
@@ -31,7 +31,7 @@ set(OUT_FILE "${EXPT_DIR}/prog.nc")
 
 # specify how to generate output file
 add_custom_command(OUTPUT "${OUT_FILE}"
-	COMMAND ${MPI_CMD} -n ${NPROC_LOCK_EXCHANGE} ${MOM6_EXE} > mom6.out 2> mom6.err
+	COMMAND ${MPI_CMD} -n ${NPROC_INTERNAL_WAVES} ${MOM6_EXE} > mom6.out 2> mom6.err
 	WORKING_DIRECTORY "${EXPT_DIR}"
 	DEPENDS MOM6)
 
@@ -40,6 +40,6 @@ list(APPEND EXPT_RESULTS ${OUT_FILE})
 endforeach()
 endforeach()
 
-add_custom_target(lock_exchange DEPENDS ${EXPT_RESULTS})
+add_custom_target(internal_waves DEPENDS ${EXPT_RESULTS})
 # don't run the experiments by default
-set_target_properties(lock_exchange PROPERTIES EXCLUDE_FROM_ALL true)
+set_target_properties(internal_waves PROPERTIES EXCLUDE_FROM_ALL true)
