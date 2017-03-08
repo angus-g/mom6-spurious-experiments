@@ -1,17 +1,8 @@
-# we need at least 3.7 to generate Ninja output
-# that will deal with the preprocessing to get dependencies
-# correct in FMS
-cmake_minimum_required(VERSION 2.8)
+# require 3.7 because it can do the right compiler checks for Cray
+cmake_minimum_required(VERSION 3.6)
 project(MOM6 C Fortran)
 
-# intel compiler stuff
-#include(intel-fortran.cmake)
-#include(intel-c.cmake)
-include(Compiler/Intel-Fortran)
-include(Compiler/Intel-C)
 
-set(CMAKE_Fortran_COMPILER ftn)
-set(CMAKE_C_COMPILER cc)
 
 set(CMAKE_Fortran_FLAGS "-fno-alias -auto -safe-cray-ptr -ftz -assume byterecl -i4 -r8 -nowarn -sox -traceback -O2 -debug minimal -fp-model source")
 set(CMAKE_C_FLAGS "-sox -traceback -O2 -debug minimal")
