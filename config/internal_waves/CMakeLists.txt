@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 # get MOM6 exe
 set(MOM6_EXE $<TARGET_FILE:MOM6>)
+# set cache variables
+set(NPROC_INTERNAL_WAVES 4 CACHE STRING "Number of processors for internal waves runs")
 
 # configure MOM_input for this experiment
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
