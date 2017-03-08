@@ -8,12 +8,18 @@ string(REPLACE ":" ";" CMAKE_LIBRARY_PATH "$ENV{CRAY_LD_LIBRARY_PATH}")
 find_library(NETCDF netcdf)
 
 # abort if netcdf not found
-if(NETCDF STREQUAL NETCDF-NOTFOUND)
+if(NETCDF STREQUAL "NETCDF-NOTFOUND")
 message(FATAL_ERROR "NetCDF library not found!")
 endif()
 
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
 set(CMAKE_Fortran_FLAGS "-fno-alias -auto -safe-cray-ptr -ftz -assume byterecl -i4 -r8 -nowarn -sox -traceback -O2 -debug minimal -fp-model source")
 set(CMAKE_C_FLAGS "-sox -traceback -O2 -debug minimal")
+elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+set(CMAKE_Fortran_FLAGS "-fcray-pointer -fdefault-real-8 -fdefault-double-8 -Waliasing -ffree-line-length-none -fno-range-check -O3")
+set(CMAKE_C_FLAGS "-O2")
+endif()
+
 add_definitions(-Duse_libMPI -Duse_netCDF -Duse_LARGEFILE -DSPMD -D__IFC)
 
 # FMS static library
