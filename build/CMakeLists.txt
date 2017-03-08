@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 project(MOM6 C Fortran)
 
 # put cray libraries in our search path
-string(REPLACE ":" ";" CMAKE_LIBRARY_PATH $ENV{CRAY_LD_LIBRARY_PATH})
+string(REPLACE ":" ";" CMAKE_LIBRARY_PATH "$ENV{CRAY_LD_LIBRARY_PATH}")
 # look for netcdf
 find_library(NETCDF netcdf)
 
