@@ -31,7 +31,7 @@ set(OUT_FILE "${EXPT_DIR}/prog.nc")
 
 # specify how to generate output file
 add_custom_command(OUTPUT "${OUT_FILE}"
-	COMMAND echo aprun -n ${NPROC} -j1 ${MOM6_EXE}
+	COMMAND mpirun -n ${NPROC} ${MOM6_EXE} > mom6.out 2> mom6.err
 	WORKING_DIRECTORY "${EXPT_DIR}"
 	DEPENDS MOM6)
 
