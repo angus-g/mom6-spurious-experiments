@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+get_target_property(MOM6_EXE MOM6 LOCATION)
+
 # configure MOM_input for this experiment
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
 
@@ -24,5 +26,16 @@ file(COPY diag_table DESTINATION "${EXPT_DIR}")
 # generate param file
 configure_file(MOM_override.in "${EXPT_DIR}/MOM_override")
 
+set(OUT_FILE "${EXPT_DIR}/prog.nc")
+
+# specify how to generate output file
+add_custom_command(OUTPUT "${OUT_FILE}"
+	COMMAND touch "${OUT_FILE}"
+	COMMAND echo "${MOM6_EXE}"
+	DEPENDS MOM6)
+
+set(EXPT_RESULTS ${EXPT_RESULTS} "${OUT_FILE}")
 endforeach()
 endforeach()
+
+add_custom_target(LOCK_EXCHANGE ALL DEPENDS ${EXPT_RESULTS})
