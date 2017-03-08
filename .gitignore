@@ -1,6 +1,12 @@
+# CMake caches
 CMakeCache.txt
 CMakeFiles/
 Makefile
-build/
 cmake_install.cmake
+
+# Build/run artifacts
+build/
 run
+
+# Post-processed MOM_input
+MOM_input
