@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-get_target_property(MOM6_EXE MOM6 LOCATION)
+# get MOM6 exe
+set(MOM6_EXE $<TARGET_FILE:MOM6>)
 
 # configure MOM_input for this experiment
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
@@ -30,12 +31,15 @@ set(OUT_FILE "${EXPT_DIR}/prog.nc")
 
 # specify how to generate output file
 add_custom_command(OUTPUT "${OUT_FILE}"
-	COMMAND touch "${OUT_FILE}"
-	COMMAND echo "${MOM6_EXE}"
+	COMMAND echo aprun -n ${NPROC} -j1 ${MOM6_EXE}
+	WORKING_DIRECTORY "${EXPT_DIR}"
 	DEPENDS MOM6)
 
-set(EXPT_RESULTS ${EXPT_RESULTS} "${OUT_FILE}")
+# add target to list
+list(APPEND EXPT_RESULTS ${OUT_FILE})
 endforeach()
 endforeach()
 
-add_custom_target(LOCK_EXCHANGE ALL DEPENDS ${EXPT_RESULTS})
+add_custom_target(lock_exchange DEPENDS ${EXPT_RESULTS})
+# don't run the experiments by default
+set_target_properties(lock_exchange PROPERTIES EXCLUDE_FROM_ALL true)
