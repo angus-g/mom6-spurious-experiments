@@ -14,3 +14,4 @@ set(RUN_PATH run CACHE PATH "Run directory for experiments")
 # experiments
 add_experiment(lock_exchange)
 add_experiment(internal_waves)
+add_experiment(baroclinic_eddies)

@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 2.8)
+
+# get MOM6 exe
+set(MOM6_EXE $<TARGET_FILE:MOM6>)
+# set cache variables
+set(NPROC_BAROCLINIC_EDDIES 8 CACHE STRING "Number of processors for lock exchange runs")
+
+# configure MOM_input for this experiment
+configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
+
+# viscosity parameters
+set(PARAMS_KH 1 5 10 20 200)
+set(PARAMS_DX 1 4 10)
+
+# loop over parameter space
+foreach(PARAM_DX IN LISTS PARAMS_DX)
+foreach(PARAM_KH IN LISTS PARAMS_KH)
+foreach(PARAM_AD IN ITEMS PPM PPM:H3)
+
+# sanitise colon in parameter value
+string(REPLACE ":" "" PARAM_AD_CLEAN "${PARAM_AD}")
+
+set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/DX${PARAM_DX}_KH${PARAM_KH}_AD${PARAM_AD_CLEAN}")
+
+# create experiment directory
+file(MAKE_DIRECTORY ${EXPT_DIR})
+# generate input.nml
+configure_file(input.nml.in "${EXPT_DIR}/input.nml")
+# copy diag_table
+file(COPY diag_table DESTINATION "${EXPT_DIR}")
+
+# generate param file
+# calculate number of points
+math(EXPR NIGLOBAL "160 / ${PARAM_DX}")
+math(EXPR NJGLOBAL "500 / ${PARAM_DX}")
+configure_file(MOM_override.in "${EXPT_DIR}/MOM_override")
+
+set(OUT_FILE "${EXPT_DIR}/prog.nc")
+
+# use twice as many processors for DX1 cases
+set(NPROC ${NPROC_BAROCLINIC_EDDIES})
+if(PARAM_DX EQUAL 1)
+math(EXPR NPROC "${NPROC} * 2")
+endif()
+
+# specify how to generate output file
+add_custom_command(OUTPUT "${OUT_FILE}"
+	COMMAND ${MPI_CMD} -n ${NPROC} ${MOM6_EXE} > mom6.out 2> mom6.err
+	WORKING_DIRECTORY "${EXPT_DIR}"
+	DEPENDS MOM6)
+
+# add target to list
+list(APPEND EXPT_RESULTS ${OUT_FILE})
+endforeach()
+endforeach()
+endforeach()
+
+add_custom_target(baroclinic_eddies DEPENDS ${EXPT_RESULTS})
+# don't run the experiments by default
+set_target_properties(baroclinic_eddies PROPERTIES EXCLUDE_FROM_ALL true)
