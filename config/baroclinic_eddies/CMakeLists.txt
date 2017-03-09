@@ -30,6 +30,13 @@ configure_file(input.nml.in "${EXPT_DIR}/input.nml")
 file(COPY diag_table DESTINATION "${EXPT_DIR}")
 
 # generate param file
+
+# override DT for low viscosity experiments
+unset(OVERRIDE_DT)
+if(PARAM_DX EQUAL 1)
+set(OVERRIDE_DT "#override DT = 300.0")
+endif(PARAM_DX EQUAL 1)
+
 # calculate number of points
 math(EXPR NIGLOBAL "160 / ${PARAM_DX}")
 math(EXPR NJGLOBAL "500 / ${PARAM_DX}")
