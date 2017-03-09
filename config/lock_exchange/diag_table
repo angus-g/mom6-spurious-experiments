@@ -1,6 +1,6 @@
 "Lock Exchange"
 1 1 1 0 0 0
-"prog", 0, "minutes", 1, "minutes", "time",
+"prog", 1, "hours", 1, "hours", "time",
 
 #"ocean_model","T_predyn","T_predyn","prog","all",.false.,"none",2
 #"ocean_model","h_predyn","h_predyn","prog","all",.false.,"none",1
