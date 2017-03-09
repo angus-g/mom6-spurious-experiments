@@ -5,6 +5,11 @@ set(MOM6_EXE $<TARGET_FILE:MOM6>)
 # set cache variables
 set(NPROC_BAROCLINIC_EDDIES 6 CACHE STRING "Number of processors for lock exchange runs")
 
+# add empty custom target for this experiment
+# which doesn't run at build time
+add_custom_target(baroclinic_eddies)
+set_target_properties(baroclinic_eddies PROPERTIES EXCLUDE_FROM_ALL true)
+
 # configure MOM_input for this experiment
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
 
@@ -59,11 +64,13 @@ add_custom_command(OUTPUT "${OUT_FILE}"
 	DEPENDS MOM6)
 
 # add target to list
-list(APPEND EXPT_RESULTS ${OUT_FILE})
-endforeach()
+list(APPEND EXPT_RESULTS_${PARAM_DX} ${OUT_FILE})
 endforeach()
 endforeach()
 
-add_custom_target(baroclinic_eddies DEPENDS ${EXPT_RESULTS})
-# don't run the experiments by default
-set_target_properties(baroclinic_eddies PROPERTIES EXCLUDE_FROM_ALL true)
+# create a custom for each horizontal resolution, for practicality
+add_custom_target(baroclinic_eddies_${PARAM_DX} DEPENDS ${EXPT_RESULTS_${PARAM_DX}})
+set_target_properties(baroclinic_eddies_${PARAM_DX} PROPERTIES EXCLUDE_FROM_ALL true)
+# add dependency for toplevel target
+add_dependencies(baroclinic_eddies baroclinic_eddies_${PARAM_DX})
+endforeach()
