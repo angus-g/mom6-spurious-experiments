@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # get MOM6 exe
 set(MOM6_EXE $<TARGET_FILE:MOM6>)
 # set cache variables
-set(NPROC_BAROCLINIC_EDDIES 8 CACHE STRING "Number of processors for lock exchange runs")
+set(NPROC_BAROCLINIC_EDDIES 6 CACHE STRING "Number of processors for lock exchange runs")
 
 # configure MOM_input for this experiment
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
@@ -40,7 +40,9 @@ set(OUT_FILE "${EXPT_DIR}/prog.nc")
 # use twice as many processors for DX1 cases
 set(NPROC ${NPROC_BAROCLINIC_EDDIES})
 if(PARAM_DX EQUAL 1)
-math(EXPR NPROC "${NPROC} * 2")
+math(EXPR NPROC "${NPROC} * 16")
+elseif(PARAM_DX EQUAL 4)
+math(EXPR NPROC "${NPROC} * 4")
 endif()
 
 # specify how to generate output file
