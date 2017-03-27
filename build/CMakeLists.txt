@@ -2,22 +2,20 @@
 cmake_minimum_required(VERSION 3.6)
 project(MOM6 C Fortran)
 
-# put cray libraries in our search path
-string(REPLACE ":" ";" CMAKE_LIBRARY_PATH "$ENV{CRAY_LD_LIBRARY_PATH}")
-# look for netcdf
-find_library(NETCDF netcdf)
-
-# abort if netcdf not found
-if(NETCDF STREQUAL "NETCDF-NOTFOUND")
-message(FATAL_ERROR "NetCDF library not found!")
-endif()
+execute_process(COMMAND nf-config --fflags OUTPUT_VARIABLE NETCDF_FFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
-set(CMAKE_Fortran_FLAGS "-fno-alias -auto -safe-cray-ptr -ftz -assume byterecl -i4 -r8 -nowarn -sox -traceback -O2 -debug minimal -fp-model source")
-set(CMAKE_C_FLAGS "-sox -traceback -O2 -debug minimal")
+  set(CMAKE_Fortran_FLAGS "-fno-alias -auto -safe-cray-ptr -ftz -assume byterecl -i4 -r8 -nowarn -sox -traceback -O2 -debug minimal -fp-model source")
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-set(CMAKE_Fortran_FLAGS "-fcray-pointer -fdefault-real-8 -fdefault-double-8 -Waliasing -ffree-line-length-none -fno-range-check -O3")
-set(CMAKE_C_FLAGS "-O2")
+  set(CMAKE_Fortran_FLAGS "-fcray-pointer -fdefault-real-8 -fdefault-double-8 -Waliasing -ffree-line-length-none -fno-range-check -O3")
+endif()
+
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${NETCDF_FFLAGS}")
+
+if(CMAKE_C_COMPILER_ID STREQUAL "Intel")
+  set(CMAKE_C_FLAGS "-sox -traceback -O2 -debug minimal")
+elseif(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  set(CMAKE_C_FLAGS "-O2")
 endif()
 
 add_definitions(-Duse_libMPI -Duse_netCDF -Duse_LARGEFILE -DSPMD -D__IFC)
