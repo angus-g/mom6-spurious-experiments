@@ -14,11 +14,13 @@ set(PARAMS_KH 0.01 0.1 1 10 100 200)
 # loop over parameter space
 foreach(PARAM_KH IN LISTS PARAMS_KH)
 foreach(PARAM_AD IN ITEMS PPM PPM:H3)
+foreach(PARAM_CO IN ITEMS Z* RHO)
 
 # sanitise colon in parameter value
 string(REPLACE ":" "" PARAM_AD_CLEAN "${PARAM_AD}")
+string(REPLACE "*" "" PARAM_CO_CLEAN "${PARAM_CO}")
 
-set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/KH${PARAM_KH}_AD${PARAM_AD_CLEAN}")
+set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/KH${PARAM_KH}_AD${PARAM_AD_CLEAN}_CO${PARAM_CO_CLEAN}")
 
 # create experiment directory
 file(MAKE_DIRECTORY ${EXPT_DIR})
@@ -27,7 +29,7 @@ configure_file(input.nml.in "${EXPT_DIR}/input.nml")
 # copy diag_table
 file(COPY diag_table DESTINATION "${EXPT_DIR}")
 # generate param file
-configure_file(MOM_override.in "${EXPT_DIR}/MOM_override")
+configure_file(MOM_override_${PARAM_CO_CLEAN}.in "${EXPT_DIR}/MOM_override")
 
 set(OUT_FILE "${EXPT_DIR}/prog.nc")
 
@@ -39,6 +41,7 @@ add_custom_command(OUTPUT "${OUT_FILE}"
 
 # add target to list
 list(APPEND EXPT_RESULTS ${OUT_FILE})
+endforeach()
 endforeach()
 endforeach()
 
