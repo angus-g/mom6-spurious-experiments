@@ -1,0 +1,4 @@
+KH                      = @PARAM_KH@
+TRACER_ADVECTION_SCHEME = "@PARAM_AD@"
+! 10 day z-tilde
+REGRID_TIME_SCALE = 864000.0

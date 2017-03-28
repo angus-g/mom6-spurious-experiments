@@ -14,11 +14,13 @@ set(PARAMS_KH 0.01 1 15 150)
 # loop over parameter space
 foreach(PARAM_KH IN LISTS PARAMS_KH)
 foreach(PARAM_AD IN ITEMS PPM PPM:H3)
+foreach(PARAM_CO IN ITEMS Z* ZT RHO)
 
 # sanitise colon in parameter value
 string(REPLACE ":" "" PARAM_AD_CLEAN "${PARAM_AD}")
-set(EXPT "KH${PARAM_KH}_AD${PARAM_AD_CLEAN}")
+string(REPLACE "*" "" PARAM_CO_CLEAN "${PARAM_CO}")
 
+set(EXPT "KH${PARAM_KH}_AD${PARAM_AD_CLEAN}_CO${PARAM_CO_CLEAN}")
 set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${EXPT}")
 
 # create experiment directory
@@ -28,7 +30,7 @@ configure_file(input.nml.in "${EXPT_DIR}/input.nml")
 # copy diag_table
 file(COPY diag_table DESTINATION "${EXPT_DIR}")
 # generate param file
-configure_file(MOM_override.in "${EXPT_DIR}/MOM_override")
+configure_file(MOM_override_${PARAM_CO_CLEAN}.in "${EXPT_DIR}/MOM_override")
 
 # specify how to generate output file
 add_custom_target("internal_waves_${EXPT}"
@@ -38,6 +40,7 @@ add_custom_target("internal_waves_${EXPT}"
 
 # add target to list
 list(APPEND EXPTS "internal_waves_${EXPT}")
+endforeach()
 endforeach()
 endforeach()
 

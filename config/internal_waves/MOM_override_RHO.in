@@ -1,0 +1,7 @@
+KH                      = @PARAM_KH@
+TRACER_ADVECTION_SCHEME = "@PARAM_AD@"
+
+#override REGRIDDING_COORDINATE_MODE = "@PARAM_CO@"
+#override THICKNESS_CONFIG = "thickness_file"
+THICKNESS_FILE = "input_rho.nc"
+#override TS_FILE = "input_rho.nc"
