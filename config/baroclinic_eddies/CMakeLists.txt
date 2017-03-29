@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # get MOM6 exe
 set(MOM6_EXE $<TARGET_FILE:MOM6>)
 # set cache variables
-set(NPROC_BAROCLINIC_EDDIES 6 CACHE STRING "Number of processors for lock exchange runs")
+set(NPROC_BAROCLINIC_EDDIES 6 CACHE STRING "Number of processors for baroclinic eddies runs")
 
 # add empty custom target for this experiment
 # which doesn't run at build time
@@ -20,11 +20,13 @@ set(PARAMS_DX 1 4 10)
 foreach(PARAM_DX IN LISTS PARAMS_DX)
 foreach(PARAM_KH IN LISTS PARAMS_KH)
 foreach(PARAM_AD IN ITEMS PPM PPM:H3)
+foreach(PARAM_CO IN ITEMS Z* RHO)
 
 # sanitise colon in parameter value
 string(REPLACE ":" "" PARAM_AD_CLEAN "${PARAM_AD}")
-set(EXPT "DX${PARAM_DX}_KH${PARAM_KH}_AD${PARAM_AD_CLEAN}")
+string(REPLACE "*" "" PARAM_CO_CLEAN "${PARAM_CO}")
 
+set(EXPT "DX${PARAM_DX}_KH${PARAM_KH}_AD${PARAM_AD_CLEAN}_CO${PARAM_CO_CLEAN}")
 set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${EXPT}")
 
 # create experiment directory
@@ -35,7 +37,7 @@ configure_file(input.nml.in "${EXPT_DIR}/input.nml")
 file(COPY diag_table DESTINATION "${EXPT_DIR}")
 
 # generate param file
-# override DT for low viscosity experiments
+# override DT for high resolution experiments
 unset(OVERRIDE_DT)
 if(PARAM_DX EQUAL 1)
 set(OVERRIDE_DT "#override DT = 300.0")
@@ -44,7 +46,7 @@ endif(PARAM_DX EQUAL 1)
 # calculate number of points
 math(EXPR NIGLOBAL "160 / ${PARAM_DX}")
 math(EXPR NJGLOBAL "500 / ${PARAM_DX}")
-configure_file(MOM_override.in "${EXPT_DIR}/MOM_override")
+configure_file(MOM_override_${PARAM_CO_CLEAN}.in "${EXPT_DIR}/MOM_override")
 
 # use twice as many processors for DX1 cases
 set(NPROC ${NPROC_BAROCLINIC_EDDIES})
@@ -62,6 +64,7 @@ add_custom_target("baroclinic_eddies_${EXPT}"
 
 # add target to list
 list(APPEND EXPTS_${PARAM_DX} "baroclinic_eddies_${EXPT}")
+endforeach()
 endforeach()
 endforeach()
 

@@ -1,0 +1,10 @@
+NIGLOBAL		= @NIGLOBAL@
+NJGLOBAL		= @NJGLOBAL@
+KH                      = @PARAM_KH@
+TRACER_ADVECTION_SCHEME = "@PARAM_AD@"
+@OVERRIDE_DT@
+
+#override REGRIDDING_COORDINATE_MODE = "@PARAM_CO@"
+#override THICKNESS_CONFIG           = "thickness_file"
+THICKNESS_FILE                       = "input_rho_@PARAM_DX@.nc"
+#override TS_FILE                    = "input_rho_@PARAM_DX@.nc"
