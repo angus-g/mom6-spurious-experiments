@@ -37,10 +37,13 @@ configure_file(input.nml.in "${EXPT_DIR}/input.nml")
 file(COPY diag_table DESTINATION "${EXPT_DIR}")
 
 # generate param file
-# override DT for high resolution experiments
 unset(OVERRIDE_DT)
 if(PARAM_DX EQUAL 1)
-set(OVERRIDE_DT "#override DT = 300.0")
+  # override DT for high resolution experiments
+  set(OVERRIDE_DT "#override DT = 300.0")
+elseif(PARAM_DX EQUAL 10 AND PARAM_CO STREQUAL RHO)
+  # override DT for low res rho experiments
+  set(OVERRIDE_DT "#override DT = 1200.0")
 endif(PARAM_DX EQUAL 1)
 
 # calculate number of points
