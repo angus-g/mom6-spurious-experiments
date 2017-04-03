@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # get MOM6 exe
 set(MOM6_EXE $<TARGET_FILE:MOM6>)
 # set cache variables
-set(NPROC_BAROCLINIC_EDDIES 6 CACHE STRING "Number of processors for baroclinic eddies runs")
+set(NPROC_BAROCLINIC_EDDIES 3 CACHE STRING "Number of processors for baroclinic eddies runs")
 
 # add empty custom target for this experiment
 # which doesn't run at build time
@@ -54,7 +54,7 @@ configure_file(MOM_override_${PARAM_CO_CLEAN}.in "${EXPT_DIR}/MOM_override")
 # use twice as many processors for DX1 cases
 set(NPROC ${NPROC_BAROCLINIC_EDDIES})
 if(PARAM_DX EQUAL 1)
-math(EXPR NPROC "${NPROC} * 16")
+math(EXPR NPROC "${NPROC} * 64")
 elseif(PARAM_DX EQUAL 4)
 math(EXPR NPROC "${NPROC} * 4")
 endif()
