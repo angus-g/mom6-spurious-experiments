@@ -5,7 +5,10 @@ project(spurious NONE)
 include(lib.cmake)
 
 # MOM6 ocean_only build
-add_subdirectory(build)
+add_subdirectory(build EXCLUDE_FROM_ALL)
+
+add_custom_target(Executables ALL)
+add_dependencies(Executables MOM6)
 
 # set cache variables
 set(MPI_CMD aprun -j1 CACHE STRING "Command line for MPI execution")

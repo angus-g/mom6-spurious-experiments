@@ -4,3 +4,6 @@
 [submodule "src/FMS"]
 	path = src/FMS
 	url = https://github.com/angus-g/FMS.git
+[submodule "build"]
+	path = build
+	url = https://github.com/angus-g/mom6-cmake-build.git
