@@ -1,13 +1,15 @@
 "Lock Exchange"
 1 1 1 0 0 0
 "prog", 30, "minutes", 1, "hours", "time",
+"energy", 0, "seconds", 1, "seconds", "time"
 
-"ocean_model","T_predyn","T_predyn","prog","all",.false.,"none",2
-"ocean_model","h_predyn","h_predyn","prog","all",.false.,"none",1
-"ocean_model","T_preale","T_preale","prog","all",.false.,"none",2
-"ocean_model","h_preale","h_preale","prog","all",.false.,"none",1
-"ocean_model","T_postale","T_postale","prog","all",.false.,"none",2
-"ocean_model","h_postale","h_postale","prog","all",.false.,"none",1
+"ocean_model","temp","temp","prog","all",.false.,"none",2
+"ocean_model","h","h","prog","all",.false.,"none",1
 
-#"ocean_model","temp","temp","prog","all",.false.,"none",2
-#"ocean_model","h","h","prog","all",.false.,"none",1
+# raw RPE values
+"ocean_model","RPE_predyn","RPE_predyn","energy","all",.false.,"none",1
+"ocean_model","RPE_preale","RPE_preale","energy","all",.false.,"none",1
+"ocean_model","RPE_postale","RPE_postale","energy","all",.false.,"none",1
+# rpe differences
+"ocean_model","RPE_dyndiff","RPE_dyndiff","energy","all",.false.,"none",1
+"ocean_model","RPE_alediff","RPE_alediff","energy","all",.false.,"none",1
