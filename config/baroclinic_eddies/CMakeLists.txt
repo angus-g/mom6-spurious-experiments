@@ -37,10 +37,18 @@ configure_file(input.nml.in "${EXPT_DIR}/input.nml")
 file(COPY diag_table DESTINATION "${EXPT_DIR}")
 
 # generate param file
-unset(OVERRIDE_DT)
+unset(OVERRIDE_DT) # default DT = 1800.0 (30 mins)
 if(PARAM_DX EQUAL 1)
   # override DT for high resolution experiments
+if(PARAM_CO STREQUAL RHO)
+# even shorter timestep for rho...
+  set(OVERRIDE_DT "#override DT = 180.0")
+else(PARAM_CO STREQUAL RHO)
   set(OVERRIDE_DT "#override DT = 300.0")
+endif(PARAM_CO STREQUAL RHO)
+elseif(PARAM_DX EQUAL 4 AND PARAM_CO STREQUAL RHO)
+  # override DT for 4km rho experiments
+  set(OVERRIDE_DT "#override DT = 900.0")
 elseif(PARAM_DX EQUAL 10 AND PARAM_CO STREQUAL RHO)
   # override DT for low res rho experiments
   set(OVERRIDE_DT "#override DT = 1200.0")
@@ -62,6 +70,7 @@ endif()
 # specify how to generate output file
 add_custom_target("baroclinic_eddies_${EXPT}"
 	COMMAND ${MPI_CMD} -n ${NPROC} ${MOM6_EXE} > mom6.out 2> mom6.err
+	COMMENT "running baroclinic_eddies_${EXPT} with ${NPROC} PEs"
 	WORKING_DIRECTORY "${EXPT_DIR}"
 	DEPENDS MOM6)
 
