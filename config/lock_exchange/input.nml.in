@@ -9,7 +9,7 @@
 		'MOM_override' /
 
 &diag_manager_nml
-	conserve_water = .false. /
+	conserve_water = .true. /
 
 &fms_nml
 	domains_stack_size = 1600000,

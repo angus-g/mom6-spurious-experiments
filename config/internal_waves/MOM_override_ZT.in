@@ -1,4 +1,10 @@
 KH                      = @PARAM_KH@
 TRACER_ADVECTION_SCHEME = "@PARAM_AD@"
 ! 10 day z-tilde
-REGRID_TIME_SCALE = 864000.0
+!REGRID_TIME_SCALE = 864000.0
+REGRID_TIME_SCALE = 2592000.0
+!#override REMAPPING_SCHEME = "@PARAM_RE@"
+
+#override THICKNESS_CONFIG = "thickness_file"
+THICKNESS_FILE = "input_rho.nc"
+#override TS_FILE = "input_rho.nc"

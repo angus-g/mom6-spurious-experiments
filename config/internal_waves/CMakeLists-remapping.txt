@@ -3,25 +3,26 @@ cmake_minimum_required(VERSION 2.8)
 # get MOM6 exe
 set(MOM6_EXE $<TARGET_FILE:MOM6>)
 # set cache variables
-set(NPROC_LOCK_EXCHANGE 2 CACHE STRING "Number of processors for lock exchange runs")
+set(NPROC_INTERNAL_WAVES 2 CACHE STRING "Number of processors for internal waves runs")
 
 # configure MOM_input for this experiment
 configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
 
 # viscosity parameters
-set(PARAMS_KH 0.01 0.1 1 10 100 200)
+set(PARAMS_KH 0.01 1 15 150)
 
 # loop over parameter space
 foreach(PARAM_KH IN LISTS PARAMS_KH)
-foreach(PARAM_AD IN ITEMS PLM PPM PPM:H3)
-foreach(PARAM_CO IN ITEMS Z* RHO)
+foreach(PARAM_AD IN ITEMS PPM PPM:H3)
+foreach(PARAM_CO IN ITEMS Z* ZT RHO)
+foreach(PARAM_RE IN ITEMS PPM_H4 PQM_IH4IH3)
 
 # sanitise colon in parameter value
 string(REPLACE ":" "" PARAM_AD_CLEAN "${PARAM_AD}")
 string(REPLACE "*" "" PARAM_CO_CLEAN "${PARAM_CO}")
+string(REPLACE "_" "" PARAM_RE_CLEAN "${PARAM_RE}")
 
-set(EXPT "KH${PARAM_KH}_AD${PARAM_AD_CLEAN}_CO${PARAM_CO_CLEAN}")
-
+set(EXPT "KH${PARAM_KH}_AD${PARAM_AD_CLEAN}_CO${PARAM_CO_CLEAN}_RE${PARAM_RE_CLEAN}")
 set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${EXPT}")
 
 # create experiment directory
@@ -34,15 +35,16 @@ file(COPY diag_table DESTINATION "${EXPT_DIR}")
 configure_file(MOM_override_${PARAM_CO_CLEAN}.in "${EXPT_DIR}/MOM_override")
 
 # specify how to generate output file
-add_custom_target("lock_exchange_${EXPT}"
-    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${NPROC_LOCK_EXCHANGE} ${MOM6_EXE} > mom6.out 2> mom6.err
+add_custom_target("internal_waves_${EXPT}"
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${NPROC_INTERNAL_WAVES} ${MOM6_EXE} > mom6.out 2> mom6.err
 	WORKING_DIRECTORY "${EXPT_DIR}"
 	DEPENDS MOM6)
 
 # add target to list
-list(APPEND EXPTS "lock_exchange_${EXPT}")
+list(APPEND EXPTS "internal_waves_${EXPT}")
+endforeach()
 endforeach()
 endforeach()
 endforeach()
 
-add_custom_target(lock_exchange DEPENDS ${EXPTS})
+add_custom_target(internal_waves DEPENDS ${EXPTS})

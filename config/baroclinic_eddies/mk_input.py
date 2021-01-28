@@ -1,14 +1,17 @@
+#!/usr/bin/env python
+
 import numpy as np
 import xarray as xr
 import sys
 
 # get DX from second argument
 dx = 1e3 * int(sys.argv[1])
+dz = int(sys.argv[2])
 
 xl = 160e3
 yl = 500e3
 zl = 1000
-dz = 50 # 20 layers
+#dz = 50 # 20 layers
 
 t_bot = 10.1
 t_top = 13.1
@@ -48,6 +51,7 @@ ds['temp'] += tp * ((x2 <= ds.x) & (ds.x <= x3) & \
 
 ds['salt'] = 35 + 0*ds.z + 0*ds.y + 0*ds.x
 
-ds.to_netcdf('input_{}.nc'.format(sys.argv[1]),
+ds.to_netcdf('input_{}_nk{}.nc'.format(sys.argv[1], zl // dz),
+        engine='netcdf4',
              encoding={'temp': {'zlib': True},
                        'salt': {'zlib': True}})

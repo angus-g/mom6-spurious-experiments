@@ -14,19 +14,24 @@ configure_file(MOM_input.in "${CMAKE_CURRENT_SOURCE_DIR}/MOM_input")
 
 # viscosity parameters
 set(PARAMS_KH 1 5 10 20 200)
-set(PARAMS_DX 1 4 10)
+#set(PARAMS_DX 1 4 10)
+set(PARAMS_DX 1)
+set(PARAMS_NK 10 40)
+#set(PARAMS_CO Z* RHO)
+set(PARAMS_CO Z*)
+set(PARAM_AD PPM:H3)
 
 # loop over parameter space
 foreach(PARAM_DX IN LISTS PARAMS_DX)
+foreach(PARAM_NK IN LISTS PARAMS_NK)
 foreach(PARAM_KH IN LISTS PARAMS_KH)
-foreach(PARAM_AD IN ITEMS PPM PPM:H3)
-foreach(PARAM_CO IN ITEMS Z* RHO)
+foreach(PARAM_CO IN LISTS PARAMS_CO)
 
 # sanitise colon in parameter value
 string(REPLACE ":" "" PARAM_AD_CLEAN "${PARAM_AD}")
 string(REPLACE "*" "" PARAM_CO_CLEAN "${PARAM_CO}")
 
-set(EXPT "DX${PARAM_DX}_KH${PARAM_KH}_AD${PARAM_AD_CLEAN}_CO${PARAM_CO_CLEAN}")
+set(EXPT "DX${PARAM_DX}_NK${PARAM_NK}_KH${PARAM_KH}_CO${PARAM_CO_CLEAN}")
 set(EXPT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${EXPT}")
 
 # create experiment directory
@@ -44,7 +49,7 @@ if(PARAM_DX EQUAL 1)
   # override DT for high resolution experiments
 if(PARAM_CO STREQUAL RHO)
 # even shorter timestep for rho...
-  set(OVERRIDE_DT "#override DT = 180.0")
+  set(OVERRIDE_DT "#override DT = 179.0")
 else(PARAM_CO STREQUAL RHO)
   set(OVERRIDE_DT "#override DT = 300.0")
 endif(PARAM_CO STREQUAL RHO)
@@ -77,12 +82,12 @@ add_custom_target("baroclinic_eddies_${EXPT}"
 	DEPENDS MOM6)
 
 # add target to list
-list(APPEND EXPTS_${PARAM_DX} "baroclinic_eddies_${EXPT}")
-endforeach()
-endforeach()
-endforeach()
+list(APPEND EXPTS_${PARAM_DX}_${PARAM_NK} "baroclinic_eddies_${EXPT}")
+endforeach(PARAM_CO)
+endforeach(PARAM_KH)
 
 # create a custom for each horizontal resolution, for practicality
-add_custom_target(baroclinic_eddies_${PARAM_DX} DEPENDS ${EXPTS_${PARAM_DX}})
-add_dependencies(baroclinic_eddies baroclinic_eddies_${PARAM_DX})
-endforeach()
+add_custom_target(baroclinic_eddies_${PARAM_DX}_${PARAM_NK} DEPENDS ${EXPTS_${PARAM_DX}_${PARAM_NK}})
+#add_dependencies(baroclinic_eddies baroclinic_eddies_${PARAM_DX})
+endforeach(PARAM_NK)
+endforeach(PARAM_DX)

@@ -34,7 +34,7 @@ configure_file(MOM_override_${PARAM_CO_CLEAN}.in "${EXPT_DIR}/MOM_override")
 
 # specify how to generate output file
 add_custom_target("internal_waves_${EXPT}"
-	COMMAND ${MPI_CMD} -n ${NPROC_INTERNAL_WAVES} ${MOM6_EXE} > mom6.out 2> mom6.err
+    COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${NPROC_INTERNAL_WAVES} ${MOM6_EXE} > mom6.out 2> mom6.err
 	WORKING_DIRECTORY "${EXPT_DIR}"
 	DEPENDS MOM6)
 
